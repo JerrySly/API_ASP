@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APIApp.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class ServiceController : ControllerBase
     {
@@ -45,7 +45,7 @@ namespace APIApp.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Service> PostService(Service service)
+        public ActionResult<Service> PostService([FromBody] Service service)
         {
             _unitOfWork.Services.Create(service);
             _unitOfWork.SaveChanges();

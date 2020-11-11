@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APIApp.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class VolunteerController : ControllerBase
     {
@@ -23,10 +23,10 @@ namespace APIApp.Controllers
         [HttpGet]
         public IEnumerable<DTOVolunteer> GetAll()
         {
-            var service = _unitOfWork.Services.GetAll();
+            var volunteers = _unitOfWork.Volunteers.GetAll();
             List<DTOVolunteer> dtoVolunteer = new List<DTOVolunteer>();
             dtoVolunteer.AddRange(
-                dtoVolunteer.Select(x => new DTOVolunteer() { Id = x.Id, Name = x.Name, Soname = x.Soname, Age =x.Age })
+                volunteers.Select(x => new DTOVolunteer() { Id = x.Id, Name = x.Name, Soname = x.Soname, Age =x.Age })
                 );
             return dtoVolunteer.ToArray();
         }
@@ -45,12 +45,12 @@ namespace APIApp.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Volunteer> PostVolunteer(Volunteer volunteer)
+        public ActionResult<Volunteer> PostVolunteer([FromBody] Volunteer volunteer)
         {
             _unitOfWork.Volunteers.Create(volunteer);
             _unitOfWork.SaveChanges();
 
-            return CreatedAtAction("GetService", new { id = volunteer.Id }, volunteer);
+            return _unitOfWork.Volunteers.GetAll().LastOrDefault();
         }
         [HttpDelete("{id}")]
         public ActionResult<Volunteer> DeleteVolunteer(int id)
